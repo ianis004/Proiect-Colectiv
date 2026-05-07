@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Perceptron Medical Hub Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #185FA5; --bg: #f7f6f3; --card: #ffffff; --border: rgba(0,0,0,0.1); }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: #1a1a18; margin: 0; padding: 0; }
+
+        .header { background: var(--primary); color: white; padding: 2rem; text-align: center; }
+        h1 { font-family: 'DM Serif Display', serif; font-size: 2.5rem; margin: 0; }
+
+        .tabs { display: flex; justify-content: center; background: white; border-bottom: 1px solid var(--border); }
+        .tab-btn { padding: 1.5rem 2rem; border: none; background: none; cursor: pointer; font-weight: 600; color: #5f5e5a; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; display: none; }
+        .container.active { display: block; }
+
+        /* Formular Numeric Complet */
+        .card { background: var(--card); border-radius: 12px; padding: 2rem; border: 1px solid var(--border); margin-bottom: 1.5rem; }
+        .section-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.9rem; font-weight: 500; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+
+        /* Imaging UI */
+        .imaging-layout { display: grid; grid-template-columns: 250px 1fr; gap: 2rem; }
+        .domain-list { display: flex; flex-direction: column; gap: 10px; }
+        .domain-item { padding: 1rem; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; transition: 0.2s; background: white; }
+        .domain-item.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .upload-zone { border: 2px dashed #ccc; border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; background: white; transition: 0.3s; }
+        .upload-zone:hover { border-color: var(--primary); background: #f0f7ff; }
+
+        /* Rezultate Tip Fișă */
+        #resultView { display: none; margin-top: 2rem; }
+        .medical-file { background: white; border-left: 6px solid var(--primary); padding: 2rem; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .check-list { list-style: none; padding: 0; }
+        .check-list li::before { content: "•"; color: var(--primary); font-weight: bold; margin-right: 10px; }
+
+        .btn-run { background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Medical Perceptron Hub</h1>
+    <p>Universitatea de Vest din Timișoara · Proiect AI</p>
+</div>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="showTab('numeric')">Parametri Clinici (13)</button>
+    <button class="tab-btn" onclick="showTab('imaging')">Cercetare Imagistică</button>
+</div>
+
+<!-- TAB 1: FORMULAR COMPLET -->
+<div id="numeric" class="container active">
+    <div class="card">
+        <p class="section-title">Semne Vitale & Biometrie</p>
+        <div class="grid">
+            <div class="field"><label>Vârstă</label><input type="number" id="age" value="45"></div>
+            <div class="field"><label>Sex</label><select id="sex"><option value="1">Masculin</option><option value="0">Feminin</option></select></div>
+            <div class="field"><label>Tensiune Sistolică</label><input type="number" id="bp_sys" value="120"></div>
+            <div class="field"><label>Tensiune Diastolică</label><input type="number" id="bp_dia" value="80"></div>
+            <div class="field"><label>BMI (kg/m²)</label><input type="number" id="bmi" value="24.5"></div>
+        </div>
+    </div>
+    <div class="card">
+        <p class="section-title">Cardiac & Metabolic</p>
+        <div class="grid">
+            <div class="field"><label>Colesterol</label><input type="number" id="chol" value="200"></div>
+            <div class="field"><label>Puls Repaus</label><input type="number" id="hr" value="72"></div>
+            <div class="field"><label>Glicemie</label><input type="number" id="glucose" value="95"></div>
+            <div class="field"><label>Tip Durere Piept (0-3)</label><input type="number" id="cp" value="0"></div>
+            <div class="field"><label>Rezultat ECG (0-2)</label><input type="number" id="ecg" value="0"></div>
+        </div>
+    </div>
+    <div class="card">
+        <p class="section-title">Stil de viață & Test Efort</p>
+        <div class="grid">
+            <div class="field"><label>Fumat (0-2)</label><input type="number" id="smoking" value="0"></div>
+            <div class="field"><label>Angină indusă efort (0/1)</label><input type="number" id="exercise" value="0"></div>
+            <div class="field"><label>Depresie ST (mm)</label><input type="number" step="0.1" id="st_dep" value="0"></div>
+        </div>
+        <button class="btn-run" onclick="runNumeric()">Rulează Analiza Perceptron</button>
+    </div>
+</div>
+
+<!-- TAB 2: IMAGINI PE DOMENII -->
+<div id="imaging" class="container">
+    <div class="imaging-layout">
+        <div class="domain-list">
+            <p class="section-title">Selectează Domeniul</p>
+            <div class="domain-item active" onclick="setDomain(this, 'Pulmonologie')">🫁 Pulmonologie</div>
+            <div class="domain-item" onclick="setDomain(this, 'Cardiologie')">🫀 Cardiologie</div>
+            <div class="domain-item" onclick="setDomain(this, 'Dermatologie')">🔬 Dermatologie</div>
+        </div>
+        <div>
+            <div class="upload-zone" onclick="document.getElementById('imgInp').click()">
+                <input type="file" id="imgInp" hidden onchange="runImage(this.files[0])">
+                <p>Încarcă imaginea pentru domeniul <strong id="domName">Pulmonologie</strong></p>
+                <img id="preview" style="max-width:300px; display:none; margin: 20px auto; border-radius: 8px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ZONA REZULTAT (FIȘĂ MEDICALĂ) -->
+<div id="resultView" class="container active">
+    <div class="medical-file">
+        <div style="display:flex; justify-content:space-between; align-items: baseline;">
+            <h2 id="resTit" style="margin:0; color:var(--primary);">Diagnostic</h2>
+            <span id="resDom" style="font-size:0.8rem; font-weight:bold; color:#888;">DOMENIU</span>
+        </div>
+        <p id="resDes" style="font-size: 1.1rem; color: #444; margin: 1.5rem 0;"></p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div>
+                <h4 style="border-bottom: 1px solid #eee;">Observații AI</h4>
+                <ul id="resLis" class="check-list"></ul>
+            </div>
+            <div style="background:#f9f9f9; padding:1rem; border-radius:8px;">
+                <h4 style="margin-top:0;">Recomandare Student</h4>
+                <p id="resRec" style="font-size:0.9rem; line-height:1.5;"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedDomain = "Pulmonologie";
+
+    function showTab(id) {
+        document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'numeric') document.getElementById('resultView').classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function setDomain(el, dom) {
+        document.querySelectorAll('.domain-item').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+        selectedDomain = dom;
+        document.getElementById('domName').innerText = dom;
+    }
+
+    async function runNumeric() {
+        const payload = {
+            age: parseFloat(document.getElementById('age').value),
+            bp_sys: parseFloat(document.getElementById('bp_sys').value),
+            chol: parseFloat(document.getElementById('chol').value),
+            glucose: parseFloat(document.getElementById('glucose').value),
+            st_dep: parseFloat(document.getElementById('st_dep').value)
+            // Adaugă și restul celor 13 aici
+        };
+        const res = await fetch('/predict_numeric', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        display(await res.json(), "Analiză Numerică");
+    }
+
+    async function runImage(file) {
+        if(!file) return;
+        document.getElementById('preview').src = URL.createObjectURL(file);
+        document.getElementById('preview').style.display = 'block';
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('domain', selectedDomain);
+
+        const res = await fetch('/predict_image', { method: 'POST', body: formData });
+        display(await res.json(), selectedDomain);
+    }
+
+    function display(data, dom) {
+        document.getElementById('resultView').classList.add('active');
+        document.getElementById('resTit').innerText = data.titlu;
+        document.getElementById('resDom').innerText = dom;
+        document.getElementById('resDes').innerText = data.desc;
+        document.getElementById('resRec').innerText = data.recomandare;
+
+        const list = document.getElementById('resLis');
+        list.innerHTML = "";
+        data.puncte.forEach(p => { list.innerHTML += `<li>${p}</li>`; });
+        document.getElementById('resultView').scrollIntoView({behavior:'smooth'});
+    }
+</script>
+</body>
+</html>
